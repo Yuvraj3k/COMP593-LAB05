@@ -10,6 +10,8 @@ def main():
     # Test out the get_pokemon_info() function
     # Use breakpoints to view returned dictionary
     poke_info = get_pokemon_info("Rockruff")
+
+    print(poke_info)
     return
 
 def get_pokemon_info(pokemon_name):
@@ -21,15 +23,24 @@ def get_pokemon_info(pokemon_name):
     Returns:
         dict: Dictionary of Pokemon information, if successful. Otherwise None.
     """
-    # TODO: Clean the Pokemon name parameter
+    pokemon_name = str(pokemon_name).strip().lower()
+    
+    pokemon_url = POKE_API_URL + pokemon_name
 
-    # TODO: Build a clean URL and use it to send a GET request
+    try:
+        # Send GET request to API and parse response
+        response = requests.get(pokemon_url)
+        response.raise_for_status()  # Raise an exception for HTTP errors 
 
-    # TODO: If the GET request was successful, convert the JSON-formatted message body text to a dictionary and return it
+        # If successful, return JSON data as a dictionary
+        return response.json()
 
-    # TODO: If the GET request failed, print the error reason and return None
-
-    return
+    except requests.exceptions.HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')
+    except requests.exceptions.RequestException as req_err:
+        print(f'Request error occurred: {req_err}')
+    
+    return None  # Return None if exception occurs
 
 if __name__ == '__main__':
     main()
